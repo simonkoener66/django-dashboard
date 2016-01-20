@@ -1,0 +1,618 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/jquery.treetable.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/jquery.treetable.theme.default.css' %}" type="text/css" />
+    <style>
+        .calendar.left {
+            display: none !important;
+        }
+        .daterangepicker_start_input {
+            display: none !important;
+        }
+        .daterangepicker_end_input label {
+            display: none !important;
+        }
+    .td-country {
+        min-width: 70px !important;
+    }
+    </style>
+{% endblock %}
+
+{% block page_title %}
+	Supply Optimization
+{% endblock %}
+
+{% block content %}
+
+    <div class="clearfix">
+		<div class="filter-block filter-block-left control-section control-break">
+			<form method="get" action="{% url 'supply_optimization' %}">
+		        <div class="control-block">
+		        	<div class="form-group">
+			            <label>Salesperson</label>
+			            <div class="form-group">
+							<select class="simpledropdown" name="user">
+
+                                    <option value="">All</option>
+
+                                {% for user in users %}
+								<option value="{{ user.id }}" {% if user.id == params.user %} SELECTED {% endif %}>
+									{{ user.get_full_name }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+		        	</div>
+		    	</div>
+
+                <div class="control-block">
+		        	<div class="form-group">
+			            <label>Publisher</label>
+			            <div class="form-group">
+							<select class="simpledropdown" name="publisher">
+                                <option value="">All</option>
+                                {% for pub in publishers %}
+								<option value="{{ pub.internal_id }}" {% if params.publisher == pub.internal_id|slugify %} SELECTED {% endif %}
+										title = "{{ pub.name }}"
+								>
+									{{ pub.name | truncatechars:20 }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+		        	</div>
+		    	</div>
+
+                <div class="control-block">
+		        	<div class="form-group">
+			            <label>App</label>
+			            <div class="form-group">
+							<select class="simpledropdown" name="app">
+                                <option value="">All</option>
+                                {% for app in apps %}
+								<option value="{{ app.app_id }}" {% if params.app == app.app_id|slugify %} SELECTED {% endif %}
+										title = "{{ app.app }}"
+								>
+									{{ app.app | truncatechars:20 }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+		        	</div>
+		    	</div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>OS</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="os">
+                                <option value="">All</option>
+                                <option value="iOS" {% if params.os == 'iOS' %} SELECTED {% endif %}>iOS</option>
+                                <option value="Android" {% if params.os == 'Android' %} SELECTED {% endif %}>Android</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+		        <div class="control-block">
+		            <div class="form-group">
+		                <label>Region</label>
+		                <div class="form-group">
+                            <select class="simpledropdown" name="region">
+								<option value="">All</option>
+                                {% for r in regions %}
+                                    <option value="{{ r }}" {% if params.region == r %} SELECTED {% endif %}>{{ r }}</option>
+                                {%  endfor %}
+							</select>
+						</div>
+		            </div>
+		        </div>
+
+                <div class="control-block">
+		            <div class="form-group">
+		                <label>Publisher Genre</label>
+		                <div class="form-group">
+                            <select class="simpledropdown" name="publisher_genre">
+								<option value="">All</option>
+								{% for genre in genres %}
+                                    <option value="{{ genre.id }}" {% if genre.id|slugify == params.publisher_genre %} SELECTED {% endif %}>{{ genre.genre_name }}</option>
+                                {%  endfor %}
+							</select>
+						</div>
+		            </div>
+		        </div>
+
+                <div class="control-block">
+		            <div class="form-group">
+		                <label>Advertiser Genre</label>
+		                <div class="form-group">
+                            <select class="simpledropdown" name="advertiser_genre">
+								<option value="">All</option>
+								{% for genre in genres %}
+                                    <option value="{{ genre.id }}" {% if genre.id|slugify == params.advertiser_genre %} SELECTED {% endif %}>{{ genre.genre_name }}</option>
+                                {%  endfor %}
+							</select>
+						</div>
+		            </div>
+		        </div>
+
+                <!--div class="control-block">
+		            <div class="form-group">
+		                <label>Type</label>
+		                <div class="form-group">
+		                	<select class="simpledropdown" name="type">
+								<option value="">All</option>
+								<option value="banners" {% if params.type == 'banners' %} SELECTED {% endif %}>Banners</option>
+                                <option value="video" {% if params.type == 'video' %} SELECTED {% endif %}>Video</option>
+                                <option value="interstitial" {% if params.type == 'interstitial' %} SELECTED {% endif %}>Interstitial</option>
+							</select>
+						</div>
+		            </div>
+		        </div-->
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Min. Daily Avails</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="impression_avail">
+                                <option value="">All</option>
+                                <option value="500" {% if params.impression_avail == 500 %} SELECTED {% endif %}>500</option>
+                                <option value="1000" {% if params.impression_avail == 1000 %} SELECTED {% endif %}>1,000</option>
+                                <option value="5000" {% if params.impression_avail == 5000 %} SELECTED {% endif %}>5,000</option>
+                                <option value="10000" {% if params.impression_avail == 10000 %} SELECTED {% endif %}>10,000</option>
+                                <option value="50000" {% if params.impression_avail == 50000 %} SELECTED {% endif %}>50,000</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Min. Prev Day Filled</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="impression">
+                                <option value="">All</option>
+                                <option value="500" {% if params.impression == 500 %} SELECTED {% endif %}>500</option>
+                                <option value="1000" {% if params.impression == 1000 %} SELECTED {% endif %}>1,000</option>
+                                <option value="5000" {% if params.impression == 5000 %} SELECTED {% endif %}>5,000</option>
+                                <option value="10000" {% if params.impression == 10000 %} SELECTED {% endif %}>10,000</option>
+                                <option value="50000" {% if params.impression == 50000 %} SELECTED {% endif %}>50,000</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Min. Revenue Prev Day</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="revenue">
+                                <option value="">All</option>
+                                <option value="50" {% if params.revenue == 50 %} SELECTED {% endif %}>$50</option>
+                                <option value="100" {% if params.revenue == 100 %} SELECTED {% endif %}>$100</option>
+                                <option value="500" {% if params.revenue == 500 %} SELECTED {% endif %}>$500</option>
+                                <option value="1000" {% if params.revenue == 1000 %} SELECTED {% endif %}>$1,000</option>
+                                <option value="5000" {% if params.revenue == 5000 %} SELECTED {% endif %}>$5,000</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+		        <div class="control-block" style="width: 220px;">
+                    <label>Day</label>
+		            <div class="input-group">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span id="date-caption">Today</span>&nbsp;<span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu select-date">
+                                <li data-date="{{ params.today }}"><a ref="#">Today</a></li>
+                                <li data-date="{{ params.day1 }}"><a ref="#">Yesterday</a></li>
+                                <li data-date="{{ params.day2 }}"><a ref="#">2 Days Ago</a></li>
+                                <li data-date="{{ params.day3 }}"><a ref="#">3 Days Ago</a></li>
+                                <li data-date="{{ params.day7 }}"><a ref="#">7 Days Ago</a></li>
+                                <li data-date="{{ params.day30 }}"><a ref="#">30 Days Ago</a></li>
+                                <li data-date=""><a ref="#">Custom</a></li>
+                            </ul>
+                        </div>
+                        <input class="form-control" type="text"  id="date" name="date" value="{{ params.date }}"/>
+		            </div>
+		        </div>
+
+		        <div class="control-block">
+		        	<label>&nbsp;</label>
+		        	<div class="form-group">
+                        <input id="sort_field" name="sort" value="{{ params.sort }}" type="hidden"/>
+                        <input id="export" name="export" value="" type="hidden"/>
+                        <input id="page" name="page" value="" type="hidden"/>
+		            	<button type="submit" class="btn btn-primary">Filter</button>
+		            </div>
+		        </div>
+		    </form>
+		</div>
+	</div>
+    <div class="row">
+        {% if params.pagination %}
+        <ul class="pagination pagination-sm" id="ul-pagination">
+        </ul>
+        <div class="pull-right" style="margin-top: 15px;">
+            <a href="javascript:void(0);" id="expand-all">Expand All</a> | <a id="collapse-all" href="javascript:void(0);">Collapse All</a>
+            | <a id="export-csv" href="javascript:void(0);">Export CSV</a>
+        </div>
+        <table class="table table-condensed tree">
+            <thead>
+            <tr>
+                {% for heading in headings %}
+                    <th class="{% if heading.sortable  %}sortable{% endif %} {{ heading.sort }}" {% if heading.sortable  %}data-order="{{ heading.sort }}" data-id="{{ heading.id }}"{% endif %}>{{ heading.name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in stats %}
+                <tr data-tt-id="{{ row.id }}" {% if row.parent %} data-tt-parent-id="{{ row.parent }}" {% endif %} {% if row.row_id %} id='tr-{{ row.row_id }}'{% endif %}>
+                    <td title="{{ row.publisher }}">{{  row.publisher|truncatechars:20 }}</td>
+                    <td title="{{ row.app_name }}">{{ row.app_name|truncatechars:20 }}</td>
+                    <td>
+                        {% if row.first_name and  row.last_name %}
+                            {{ row.first_name }}.{{ row.last_name|slice:":1" }}
+                        {%  endif %}
+                    </td>
+                    <td>{{ row.os }}</td>
+                    <td>{{ row.publisher_genre }}</td>
+                    <td>{{ row.advertiser_genre }}</td>
+                    <td class="td-country">{{ row.country }}</td>
+                    <td class="{{ row.status }} td-status"><div><div class="progress-bar" style="width: {{ row.percent }}%;"></div> </div></td>
+                    <td class="avails-td" data-origin={{ row.impression_avail | floatformat:"0"}} data-revenue={{ row.revenue | floatformat:"0" }}>
+
+                            <button class="editable" data-content="
+                               <div class='avails-container' data-rid='{{ row.row_id }}'data-id='{{ row.id }}' data-child-ids='{{ row.child_ids }}'>
+                               <div class='form-group'>
+                                    <label><b>Daily</b></label>
+                                    <div class='input-group'>
+                                        <span class='input-group-addon'>Impressions</span>
+                                        <input class='form-control daily-avails' value='{{ row.impression_avail| floatformat:"0" }}'>
+                                    </div>
+                               </div>
+                               <div class='form-group'>
+                                   <label><b>Monthly</b></label>
+                                   <div class='input-group'>
+                                    <span class='input-group-addon'>Impressions</span>
+                                    <input class='form-control monthly-avails' value=''>
+                                   </div>
+                               </div>
+                               <button class='btn-sm btn btn-primary budget-save'>Save</button>&nbsp;
+                               <button class='btn btn-sm avails-cancel'>Cancel</button>
+
+                               </div>" data-html="true">
+
+                        {{ row.impression_avail | floatformat:"0" | intcomma }}
+
+                            </button>
+
+                    </td>
+                    <td>{{ row.impressions | floatformat:"0"| intcomma }}</td>
+                    <td>${{ row.revenue | floatformat:"0"| intcomma }}</td>
+                    <td>${{ row.margin | floatformat:"0"| intcomma }}</td>
+                    <td>
+                        <a href="{% url 'demand_optimization' %}?region={{ row.region }}&traffic=publisher&genre={{ row.publisher_genre_id }}&os={{ row.origin_os }}&date={{ params.date }}" target="_blank">Demand</a> |
+                        <a href="#" data-target="#share-modal" data-toggle="modal" class="share"
+                           data-app="{{ row.origin_app_name }}"
+                           data-publisher="{{ row.origin_publisher }}" data-os="{{ row.origin_os }}"
+                           data-publisher-genre="{{ row.origin_publisher_genre }}"
+                           data-advertiser-genre="{{ row.origin_advertiser_genre }}"
+                           data-link="{{ request.scheme }}://{{ request.get_host }}{% url 'supply_optimization' %}?publisher={{row.publisher_id}}&app={{ row.app_id }}&os={{ row.origin_os }}&user={{params.user }}&region={{row.region}}&publisher_genre={{row.publisher_genre_id}}&advertiser_genre={{ row.advertiser_genre_id }}&date={{params.date}}&expand=true">Share</a>
+                        <span id="span-{{ row.id }}" style="padding: 0;"></span>
+                    </td>
+                </tr>
+            {%  endfor %}
+            </tbody>
+        </table>
+        {% else %}
+           <div class="alert alert-warning">
+                <strong>No Result!</strong>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block footer %}
+    <div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">Share</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="share-form" data-toggle="validator" role="form">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">From:</label>
+                            <input type="text" class="form-control" id="share-from" name="from" value="{{ request.user.get_full_name }} <{{ request.user.email }}>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">To:</label>
+                            <input type="text" class="form-control" id="share-to" name="to" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Subject:</label>
+                            <input type="text" class="form-control" id="share-subject" name="subject" required=>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Message:</label>
+                            <textarea class="form-control" id="share-message" name="message" rows="7" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="share-send">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.twbsPagination.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'js/jquery.treetable.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/jquery.number.min.js' %}"></script>
+    <script>
+    var upJson = {{ up_json|safe }};
+    function today() {
+        return moment('{% now "Y-m-d" %}', 'YYYY-MM-DD')
+    }
+    $(function() {
+        {% if params.pagination %}
+        $('a.share').click(function() {
+            var $this = $(this), subject = 'App/Placement: '+$this.data('publisher') + ' - ' + $this.data('app') +
+                    ' - ' + $this.data('os') + ' - ' + $this.data('publisherGenre') + ' - ' + $this.data('advertiserGenre');
+            $('#share-subject').val(subject);
+            var text = 'Check this out\n'+$this.data('link');
+            $('#share-message').val(text);
+            setTimeout(function() {$('#share-to').focus();}, 500);
+            $('#share-send').data('id', $this.next().attr('id'));
+        });
+
+        $('#share-send').click(function(ev) {
+            var data = {};
+            $("#share-form").serializeArray().map(function(x){data[x.name] = x.value;});
+            var $span = $('#'+$(this).data('id'));
+            $span.html('<i class="fa fa-circle-o-notch fa-spin fade-in"></i>');
+            $.post('{% url 'tools_api_mail' %}', data, function(res) {
+                if (res.status == 'success') {
+                    $span.html('<i class="fa fa-check fade-in success"></i>');
+                } else {
+                    $span.html('<i class="fa fa-exclamation-triangle fade-in danger"></i>');
+                }
+            });
+            $(this).prev().trigger('click');
+        });
+        $('#ul-pagination').twbsPagination({
+            totalPages: {{ params.pagination.count }},
+            visiblePages: 15,
+            startPage: {{ params.pagination.current }},
+            onPageClick: function (event, page) {
+                if (page == {{ params.pagination.current }}) {
+                    return;
+                }
+
+                $('#page').val(page);
+                $('form').submit();
+            }
+        });
+        {% endif %}
+        function checkAgo() {
+            var selected = moment($("#date").datepicker('getDate'));
+
+            if (selected.format('YYYY-MM-DD') == today().format('YYYY-MM-DD')) {
+               $('#date-caption').text('Today');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 1).format('YYYY-MM-DD')) {
+               $('#date-caption').text('Yesterday');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 2).format('YYYY-MM-DD')) {
+               $('#date-caption').text('2 Days Ago');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 3).format('YYYY-MM-DD')) {
+               $('#date-caption').text('3 Days Ago');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 7).format('YYYY-MM-DD')) {
+               $('#date-caption').text('7 Days Ago');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 30).format('YYYY-MM-DD')) {
+               $('#date-caption').text('30 Days Ago');
+            } else {
+                $('#date-caption').text('Custom');
+            }
+
+        }
+        $("#date").datepicker({format: "yyyy-mm-dd"}).on('changeDate', function(e) {
+            checkAgo();
+        });
+
+        $('.select-date li').click(function(ev) {
+            var _date = $(this).data('date');
+            if (_date) {
+                $("#date").datepicker('update', _date);
+            } else {
+                $("#date").datepicker('show');
+            }
+            $('#date-caption').text($(this).find('a').text());
+        });
+        checkAgo();
+
+         $('.tree').treetable({
+            column: 6,
+            expandable: true
+            {% if params.expand %}
+                ,initialState: 'expanded'
+            {% endif %}
+        });
+
+        $('th.sortable').click(function() {
+            var $th = $(this),
+                $elSort = $('#sort_field'),
+                id = $th.data('id'),
+                order = $th.data('order');
+            if (order == 'asc') {
+                $elSort.val('-'+id);
+            } else {
+              $elSort.val(id);
+            }
+            $('form').submit();
+        });
+
+        /*$('.editable').popover({
+                animation: false,
+                toggle: "popover",
+                container: 'body',
+                placement: 'right|auto',
+                trigger:'manual'
+        });*/
+        var $popoverEl = null;
+
+        function checkPopover() {
+            if ($popoverEl) {
+                $popoverEl.popover('destroy');
+                $popoverEl = null;
+            }
+        }
+
+        $('.editable').click(function() {
+            checkPopover();
+            var $this = $(this), origin = $this.parent().data('origin');
+            $this.popover({
+                animation: false,
+                toggle: "popover",
+                container: 'body',
+                placement: 'right|auto',
+                trigger:'manual'
+            });
+            $this.popover('show');
+            $popoverEl = $this;
+            $this.addClass('has-popover');
+            var $el = $('#'+$this.attr('aria-describedby'))
+            $el.find('input:first').val(origin);
+            $el.find('input:last').val(origin*30);
+            $el.find('input:first').focus();
+            $el.find('input').number(true);
+        });
+        $('body').click(function(ev) {
+           var $el = $(ev.target);
+            if ($el.hasClass('editable')) {
+                return;
+            }
+            if ($el.parents('.popover').length) {
+                return;
+            }
+            checkPopover();
+        });
+        $('body').on('click', '.avails-cancel', function() {
+            checkPopover();
+        });
+
+        function updateParentTrs($elTr, diff) {
+            var parentId = $elTr.data('tt-parent-id');
+            if (parentId) {
+                var $elParent = $('tr[data-tt-id="'+parentId+'"]'),
+                    $elTd = $elParent.find('td.avails-td'),
+                    origin = $elTd.data('origin');
+                origin += diff;
+                $elTd.data('origin', origin);
+                $elTd.find('button').text('$'+origin.toLocaleString());
+                //$elParent.find('.progress-bar').css('width', (origin ? $elTd.data('revenue') / origin * 100 : 0)+'%');
+                updateParentTrs($elParent, diff);
+            }
+        }
+        $('body').on('input', '.monthly-avails', function() {
+            var $this = $(this), val = $this.val(),
+                    $elContainer = $this.parents('.avails-container'),
+                    $daily = $elContainer.find('.daily-avails');
+            if (window.isNaN(val)) {
+                $elContainer.addClass('has-error');
+            } else {
+                $elContainer.removeClass('has-error');
+                var _val = Math.round(parseInt(val) / 30);
+                $daily.val((isNaN(_val) || !_val ? '' : _val)+'');
+            }
+        });
+        $('body').on('input', '.daily-avails', function() {
+            var $this = $(this), val = $this.val(),
+                    $elContainer = $this.parents('.avails-container'),
+                    $monthly = $elContainer.find('.monthly-avails');
+            if (window.isNaN(val)) {
+                $elContainer.addClass('has-error');
+            } else {
+                $elContainer.removeClass('has-error');
+                $monthly.val(parseInt(val) * 30+'');
+            }
+        });
+        $('body').on('click', '.budget-save', function() {
+            var $elContainer = $(this).parents('.avails-container'),
+                    avails = $elContainer.find('.daily-avails').val();
+            if (isNaN(avails)) {
+                $elContainer.addClass('has-error');
+            } else {
+                $elContainer.removeClass('has-error');
+                var rowId = $elContainer.data('rid'), childIds = $elContainer.data('childIds')+'';
+
+                $('#updating').css('display', 'block');
+                if (rowId) {
+                    $.get('{% url 'api_update_avail' %}?id='+rowId+'&val='+avails, function() {
+                        $('#updating').css('display', 'none');
+                        var $elTr = $('tr[data-tt-id="'+$elContainer.data('id')+'"]'),
+                        currentVal = parseInt(avails),
+                        originVal = $elTr.find('.avails-td').data('origin'), revenue = $elTr.find('.avails-td').data('revenue'),
+                        diff = currentVal - originVal;
+                        $elTr.find('button').text('$'+currentVal.toLocaleString());
+                        $elTr.find('.avails-td').data('origin', currentVal);
+                        //$elTr.find('.progress-bar').css('width', (currentVal ? revenue / currentVal * 100 : 0)+'%');
+                        updateParentTrs($elTr, diff);
+                    });
+                } else {
+                    if (childIds) {
+                        var ids = childIds.split(',');
+                        var avails = Math.floor(parseInt(avails)/ids.length);
+                        $.get('{% url 'api_update_avail' %}?ids='+childIds+'&val='+avails, function() {
+                            $('#updating').css('display', 'none');
+                             for (var i in ids) {
+                                 var $elTr = $('#tr-' + ids[i]),
+                                     currentVal = parseInt(avails),
+                                     originVal = $elTr.find('.avails-td').data('origin'), revenue = $elTr.find('.avails-td').data('revenue'),
+                                     diff = currentVal - originVal;
+                                 $elTr.find('button').text('$' + currentVal.toLocaleString());
+                                 $elTr.find('.avails-td').data('origin', currentVal);
+                                 updateParentTrs($elTr, diff);
+                             }
+                        });
+                    }
+                }
+                checkPopover();
+            }
+        });
+
+        $('#expand-all').click(function() {
+           $('.tree').treetable('expandAll');
+        });
+
+        $('#collapse-all').click(function() {
+            $('.tree').treetable('collapseAll');
+        });
+        $('#export-csv').click(function() {
+            $('#export').val('true');
+            $('form').submit();
+            $('#export').val('');
+        });
+
+        $("select[name='user']").change(function() {
+            var $el = $(this), val = $el.val();
+            console.log(upJson[val]);
+            if (upJson[val]) {
+                $('select[name="publisher"]').select2("val", upJson[val]);
+            }
+        });
+
+    });
+    </script>
+{% endblock %}

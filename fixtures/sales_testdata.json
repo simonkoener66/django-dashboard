@@ -1,0 +1,154 @@
+[
+    {
+        "fields": {
+            "first_name": "Joe",
+            "last_name": "Smith",
+            "date_updated": "2015-07-15T02:19:12.380Z",
+            "is_active": true,
+            "last_login": "2015-07-15T02:38:14.518Z",
+            "date_created": "2015-07-15T02:19:12.380Z",
+            "password": "pbkdf2_sha256$20000$OLTLsfoIMy0Z$fU1BPrOkWTBwzh7V1+scf4Ky6tCldThd4y3Rp1Skh1M=",
+            "type": "regular",
+            "email": "joe@yahoo.com"
+        },
+        "model": "sales.authuser",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "date_updated": "2015-07-15T02:19:33.136Z",
+            "is_active": true,
+            "last_login": null,
+            "date_created": "2015-07-15T02:19:33.136Z",
+            "password": "pbkdf2_sha256$20000$FIqGIW5mYefD$ErPLn/vy1LENDLOu9sYR8UottkOSACmCkghsE87FQwk=",
+            "type": "regular",
+            "email": "jane@yahoo.com"
+        },
+        "model": "sales.authuser",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "first_name": "Fred",
+            "last_name": "Hsu",
+            "date_updated": "2015-07-15T02:20:24.339Z",
+            "is_active": true,
+            "last_login": null,
+            "date_created": "2015-07-15T02:20:24.339Z",
+            "password": "pbkdf2_sha256$20000$5rijQySG4ATp$+ynPyA5gi+Ad/oGoR0NAlN2eEWMgMhVvFySIQtS630s=",
+            "type": "admin",
+            "email": "fred@yahoo.com"
+        },
+        "model": "sales.authuser",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "date_modified": null,
+            "region": "Americas",
+            "advertiser_id": 100,
+            "business_unit": "Advertiser",
+            "user": 1,
+            "discount_json": 0,
+            "date_created": null
+        },
+        "model": "sales.account",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "date_modified": null,
+            "region": "EMEA",
+            "advertiser_id": 101,
+            "business_unit": "Publisher",
+            "user": 1,
+            "discount_json": 0,
+            "date_created": null
+        },
+        "model": "sales.account",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "date_modified": null,
+            "region": "APAC",
+            "advertiser_id": 102,
+            "business_unit": "Trading desk",
+            "user": 2,
+            "discount_json": 0,
+            "date_created": null
+        },
+        "model": "sales.account",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "date_updated": null,
+            "date_end": "2015-03-31",
+            "date_start": "2015-01-01",
+            "target_revenue": 1000000,
+            "target_margin": 400000,
+            "user": 1,
+            "date_created": null,
+            "plan": "100-percent"
+        },
+        "model": "sales.userplan",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "date_updated": null,
+            "date_end": "2015-03-31",
+            "date_start": "2015-01-01",
+            "target_revenue": 10000,
+            "target_margin": 550,
+            "user": 2,
+            "date_created": null,
+            "plan": "accel-decel-1"
+        },
+        "model": "sales.userplan",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "advertiser": 101,
+            "margin": 3233,
+            "day": "2015-01-01",
+            "revenue": 8700
+        },
+        "model": "sales.stat",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "advertiser": 102,
+            "margin": 2000,
+            "day": "2015-01-01",
+            "revenue": 5000
+        },
+        "model": "sales.stat",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "advertiser": 101,
+            "margin": 3000,
+            "day": "2015-01-02",
+            "revenue": 9300
+        },
+        "model": "sales.stat",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "advertiser": 102,
+            "margin": 2500,
+            "day": "2015-01-02",
+            "revenue": 4000
+        },
+        "model": "sales.stat",
+        "pk": 4
+    }
+]

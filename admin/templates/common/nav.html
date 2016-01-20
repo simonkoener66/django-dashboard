@@ -1,0 +1,70 @@
+<ul class="nav nav-pills nav-stacked">
+    <li>
+        <a href="{% url 'index' %}">
+            <i class="fa fa-home"></i>
+            <span>Home</span>
+        </a>
+
+    </li>
+
+    <!--li {% if 'sales' in request.path %} class="active" {% endif %} >
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-dollar"></i>
+            <span>Sales</span>
+            <i class="fa fa-chevron-circle-down drop-icon"></i>
+        </a>
+        <ul class="submenu" style="display: block;">
+            <li>
+                <a href="{% url 'sales_commission' %}">
+                    <span>Commission (In progress)</span>
+                </a>
+            </li>
+        </ul>
+    </li-->
+
+    <li class="{% if 'tools' in request.path %}active{% endif %}">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-cog"></i>
+            <span>Tools</span>
+            <i class="fa fa-chevron-circle-down drop-icon"></i>
+        </a>
+        <ul class="submenu" style="display: block;">
+            <li>
+                <a href="{% url 'demand_optimization' %}">
+                    <span>Demand Optimization</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'supply_optimization' %}">
+                    <span>Supply Optimization</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    {% if request.user.type == 'admin' %}
+    <li class="{% if 'admin' in request.path %}active{% endif %}">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-user"></i>
+            <span>Admin</span>
+            <i class="fa fa-chevron-circle-down drop-icon"></i>
+        </a>
+        <ul class="submenu" style="display: block;">
+            <li>
+                <a href="{% url 'admin_users' %}">
+                    <span>Users</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_assign_advertisers' %}">
+                    <span>Assign Advertisers</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'admin_assign_publishers' %}">
+                    <span>Assign Publishers</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    {% endif %}
+</ul>

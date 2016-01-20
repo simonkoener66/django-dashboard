@@ -1,0 +1,69 @@
+{% load staticfiles %}
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/daterangepicker.js' %}"></script>
+<script>
+
+    function today() {
+        return moment('{% now "Y-m-d" %}', 'YYYY-MM-DD')
+    }
+    $(function() {
+        $('#reportrange').daterangepicker({
+                    startDate: moment('{{params.start_date}}, YYYY-MM-DD'),
+                    endDate: moment('{{params.end_date}}', 'YYYY-MM-DD'),
+                    dateLimit: { days: 60 },
+                    showDropdowns: true,
+                    showWeekNumbers: true,
+                    timePicker: false,
+                    timePickerIncrement: 1,
+                    timePicker12Hour: true,
+                    ranges: {
+                        'Last 30 Days': [today().subtract('days', 29), today()],
+                        'This Month': [today().startOf('month'), today().endOf('month')],
+                        'Last Month': [today().subtract('month', 1).startOf('month'), today().subtract('month', 1).endOf('month')],
+                        'This Quarter': [today().month(today().month() - today().month() % 3).startOf('month'), today().month(today().month() - today().month() % 3 + 2).endOf('month')],
+                        'Last Quater': [today().month(today().month() - today().month() % 3 - 3).startOf('month'), today().month(today().month() - today().month() % 3 - 1).endOf('month')],
+                        'This Year': [today().month(0).date(1), today()]
+                    },
+                    opens: 'left',
+                    buttonClasses: ['btn btn-default'],
+                    applyClass: 'btn-small btn-primary',
+                    cancelClass: 'btn-small',
+                    format: 'YYYY-MM-DD',
+
+                    separator: ' to ',
+                    locale: {
+                        applyLabel: 'Submit',
+                        fromLabel: 'From',
+                        toLabel: 'To',
+                        customRangeLabel: 'Custom Range',
+                        daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                        firstDay: 1
+                    }
+                },
+                function (start, end) {
+                    $('#start_date').val(start.format('YYYY-MM-DD'));
+                    $('#end_date').val(end.format('YYYY-MM-DD'));
+                    processDisplay(start, end);
+                }
+        );
+        //Set the initial state of the picker label
+
+        function processDisplay(start, end) {
+            var data = "";
+            if (start.format('MMM D') === end.format('MMM D')) {
+                data = $('.daterangepicker li.active').html() + " " + start.format('MMM D');
+            } else {
+                console.log(start.format('YYYY') + " " + end.format('YYYY'))
+                if (start.format('YYYY') !== end.format('YYYY')) {
+                    data = $('.daterangepicker li.active').html() + " (" + start.format('MMM D, YYYY') + ' &ndash; ' + end.format('MMM D, YYYY') + ")";
+                } else {
+                    data = $('.daterangepicker li.active').html() + " (" + start.format('MMM D') + ' &ndash; ' + end.format('MMM D') + ")"
+                }
+
+            }
+            $('#reportrange span').html(data);
+        }
+        processDisplay(moment('{{params.start_date}}', 'YYYY-MM-DD'), moment('{{params.end_date}}', 'YYYY-MM-DD'));
+    });
+</script>

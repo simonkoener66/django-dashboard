@@ -1,0 +1,5 @@
+settings_live.py
+.idea/**
+template/**
+/**/*.pyc
+/**/.DS_Store

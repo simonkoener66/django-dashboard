@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block page_title %}
+	Users - {% if user %}Edit{% else %}Add{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <form method="post" class="col-lg-4" autocomplete="off">
+            {% csrf_token %}
+            {% if user.id %}
+            <input type="hidden" value="" name="delete">
+            <div class="form-group">
+                <label>User ID</label>
+                <input name="id" disabled value="{{ user.id }}" class="form-control"/>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>First Name</label>
+                <input name="first_name" value="{{ user.first_name }}" required="true" class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label>Last Name</label>
+                <input name="last_name" value="{{ user.last_name }}" required="true" class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required="true" class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label>Password{% if user.id %}<small>(Leave blank if you don't want to change)</small>{% endif %}</label>
+                <input name="password" type="password" value="" {% if not user.id %}required="true"{% endif %} class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label>Type</label>
+                <select name="type" class="simpledropdown form-control">
+                    <option value="regular">Regular</option>
+                    <option value="admin" {% if user.type == 'admin' %}SELECTED {% endif %}>Admin</option>
+                </select>
+            </div>
+            {% if user.id %}
+                <div class="form-group">
+                    <label>Date Created</label>
+                    <span>{{ user.date_created|date:"n/j/Y" }}</span>
+                </div>
+                <div class="form-group">
+                    <label>Date Updated</label>
+                    {% if user.date_updated %}
+                    <span>{{ user.date_created|date:"n/j/Y" }}</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <br>
+            <button class="btn-primary btn">{% if user.id %}Update{% else %}Add{% endif %}</button>
+            <a class="btn pull-right btn-default" href="{% url 'admin_users' %}">Cancel</a>
+            {% if user.id %}
+                &nbsp;&nbsp;<button type="button" class="btn-danger btn pull-right" id="btn-delete">Delete</button>
+            {% endif %}
+
+
+        </form>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        $(function() {
+            $('#btn-delete').click(function() {
+               if (confirm("Are you sure?")) {
+                   $('input[name="delete"]').val('true');
+                   $('form').submit();
+               }
+            });
+        });
+    </script>
+{% endblock footer %}

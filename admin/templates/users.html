@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block page_title %}
+	Users
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <a class="btn btn-primary pull-right" href="{% url 'admin_edit_user' %}">
+        Add New
+    </a>
+</div>
+<div class="row result-table">
+    <table class="table table-condensed">
+        <thead>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Type</th>
+            <th>Date Created</th>
+            <th>Date Modified</th>
+            <th>Last Logged in</th>
+            <th>Options</th>
+        </thead>
+        <tbody>
+            {% for user in users %}
+             <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.type }}</td>
+                <td>{{ user.date_created|date:"n/j/Y"}}</td>
+                <td>{% if user.date_updated %}{{ user.date_updated|date:"n/j/Y" }}{% endif %}</td>
+                <td>{% if user.last_login %}{{ user.last_login|date:"n/j/Y P"}}{% endif %}</td>
+                <td><a href="{% url 'admin_edit_user' %}?id={{ user.id }}">Edit</a></td>
+             </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage.com</title>
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}"/>
+    <!-- libraries -->
+    <!-- <link href="css/libs/jquery-ui-1.10.2.custom.css" rel="stylesheet" type="text/css" /> -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/libs/select2.css' %}" type="text/css"/>
+    <!-- this page specific styles -->
+    {% block header %}
+    {% endblock %}
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/compiled/layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/compiled/elements.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/compiled/manage.css' %}">
+    <!-- media queary -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/compiled/media-query.css' %}">
+    <!-- Favicon -->
+    <link type="image/x-icon" href="{% static 'favicon.png' %}" rel="shortcut icon"/>
+    <!-- google font libraries -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,300|Titillium+Web:200,300,400'
+          rel='stylesheet' type='text/css'>
+    <!--[if lt IE 9]>
+		<script src="{% static 'js/html5shiv.js' %}"></script>
+		<script src="{% static 'js/respond.min.js' %}"></script>
+	<![endif]-->
+    <!--[if lt IE 8]>
+		<link href="{% static 'css/libs/font-awesome-ie7.css' %}" type="text/css" rel="stylesheet" />
+	<![endif]-->
+</head>
+
+<body>
+<div id="updating" class="alert-warning">Updating...</div>
+
+<header class="navbar" id="header-navbar">
+    <div class="container">
+        <a href="{% url 'index' %}" id="logo" class="navbar-brand col-md-2 col-sm-3 col-xs-12">
+            <span class="hidden-xs"><img src="{% static 'img/logo.png' %}" alt="Manage.com"/></span>
+            <span class="visible-xs"><img src="{% static 'img/mob-logo.png' %}" alt="Manage.com"/></span>
+        </a>
+        <span class="mob-title">Advertiser</span>
+
+        <div class="col-md-10 pull-right">
+            <div class="row">
+                <div id="topnav-right">
+                    <button class="navbar-toggle" data-target=".main-nav" data-toggle="collapse" type="button">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="fa fa-bars"></span>
+                    </button>
+
+                    <div class="nav-no-collapse pull-right" id="header-nav">
+                        <ul class="nav navbar-nav pull-right">
+                            <li class="dropdown profile-dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="hidden-xs">{{ request.user.get_full_name }}<b class="caret"></b></span>
+                                    <span class="visible-xs"><i class="fa fa-user"></i><b class="caret"></b></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url 'auth_logout' %}"><i class="fa fa-power-off"></i><span>Logout</span></a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!--end of topnav-right -->
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">            <!-- mobile menu -->
+<div class="hidden-md hidden-lg">
+    <div class="collapse main-nav mobile-nav " id="sidebar-nav">
+        {% include 'common/nav.html' %}
+    </div>
+</div>
+<!-- end of mobile menu -->
+<div class="row">
+<div class="col-md-2 hidden-sm hidden-xs" id="nav-col">
+    <section id="col-left">
+
+        <div class="hidden-sm hidden-xs">
+            <div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
+                {% include 'common/nav.html' %}
+            </div>
+        </div>
+    </section>
+</div>
+<div class="col-md-10" id="content-wrapper">
+
+<div id="side-bar-toggler"><span class="fa fa-expand"></span></div>
+<h1>{% block page_title %}{% endblock %}</h1>
+
+<div class="row">
+<div class="col-md-12">
+<div class="main-box">
+    {% if messages %}
+        {% for m in messages %}
+            <div class="alert alert-{% if m.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}success{% endif %}">
+                {{ m }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+<!-- end of main-box -->
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer id="footer-bar">
+    <p id="footer-copyright">
+        &copy; {% now "Y" %} <a target="_blank" href="//www.manage.com/">Manage.com</a>
+    </p>
+</footer>
+<!-- global scripts -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src={% static 'js/boostrap.min.js' %}></script>
+<script src="{% static 'js/jquery-ui.custom.min.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<!-- theme scripts -->
+<script src="{% static 'js/scripts.js' %}"></script>
+
+{% block footer %}{% endblock %}
+<script>
+    $("#side-bar-toggler").click(function(){
+        var width = $('#nav-col').width();
+        if($("#side-bar-toggler span").hasClass('fa-expand')){
+            $("#side-bar-toggler span").switchClass('fa-expand','fa-compress');
+            $('#nav-col').animate({'margin-left':-(width+1)},500,'easeOutExpo',function(){
+                $('#nav-col').siblings('#content-wrapper').switchClass('col-md-10','col-md-12');
+            });
+            localStorage.setItem('expanded', 'true');
+        }else{
+            $("#side-bar-toggler span").switchClass('fa-compress','fa-expand');
+            $('#nav-col' ).css("display", "block");
+            $('#nav-col').siblings('#content-wrapper').switchClass('col-md-12','col-md-10');
+            $('#nav-col' ).animate({ "margin-left":0},500,'easeInExpo',function(){
+                $('#nav-col' ).removeAttr("style");
+            });
+            localStorage.removeItem('expanded');
+
+        }
+    });
+    $(function() {
+        var expanded = localStorage.getItem('expanded');
+        if(expanded) {
+            var width = $('#nav-col').width();
+            $("#side-bar-toggler span").switchClass('fa-expand','fa-compress');
+            $('#nav-col').css('margin-left', -(width+1));
+            $('#nav-col').siblings('#content-wrapper').switchClass('col-md-10','col-md-12');
+        }
+
+        $('.simpledropdown').select2({
+            minimumResultsForSearch: -1
+        });
+    });
+</script>
+
+</body>
+</html>

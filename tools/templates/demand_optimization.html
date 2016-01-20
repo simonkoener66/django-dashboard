@@ -1,0 +1,599 @@
+{% extends 'base.html' %}
+        .daterangepicker_start_input {
+            display: none !important;
+        }
+{% load staticfiles %}
+{% load humanize %}
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/jquery.treetable.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/jquery.treetable.theme.default.css' %}" type="text/css" />
+    <style>
+        .calendar.left {
+            display: none !important;
+        }
+        .daterangepicker_end_input label {
+            display: none !important;
+        }
+    </style>
+{% endblock %}
+
+{% block page_title %}
+    Demand Optimization
+{% endblock %}
+
+{% block content %}
+
+    <div class="clearfix">
+        <div class="filter-block filter-block-left control-section control-break">
+            <form method="get" action="{% url 'demand_optimization' %}" id="main-form">
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Salesperson</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="user">
+
+                                    <option value="">All</option>
+
+                                {% for user in users %}
+                                    <option value="{{ user.id }}" {% if user.id == params.user %} SELECTED {% endif %}>
+                                        {{ user.get_full_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Advertiser</label>
+                        <div class="form-group">
+                            <select id="sel-advertiser" name="advertiser" class="select2" style="min-width: 150px;">
+                                <option value="">All</option>
+                                {% for advertiser in advertisers %}
+                                    {% if advertiser.internal_id %}
+                                        <option value="{{ advertiser.internal_id }}"
+                                                title="{{ advertiser.name }}"
+                                                {% if advertiser.internal_id|slugify == params.advertiser %}
+                                                SELECTED
+                                                {% endif %}
+                                                >
+                                            {{ advertiser.name|truncatechars:20 }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Campaign</label>
+                        <div class="form-group">
+                            <select id="sel-campaign" name="campaign" class="select2" style="min-width: 150px;">
+                                <option value="">All</option>
+                                {% for c in campaigns %}
+                                    {% if c.campaign_id %}
+                                        <option value="{{ c.campaign_id }}" title="{{ c.campaign }}"
+                                                {% if c.campaign_id|slugify == params.campaign %}
+                                                SELECTED
+                                                {% endif %}
+                                                >
+                                            {{ c.campaign | truncatechars:20 }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Region</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="region">
+                                <option value="">All</option>
+                                {% for r in regions %}
+                                    <option value="{{ r }}" {% if params.region == r %} SELECTED {% endif %}>{{ r }}</option>
+                                {%  endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>OS</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="os">
+                                <option value="">All</option>
+                                <option value="iOS" {% if params.os == 'iOS' %} SELECTED {% endif %}>iOS</option>
+                                <option value="Android" {% if params.os == 'Android' %} SELECTED {% endif %}>Android</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="genre" placeholder="All">
+                                <option value="">All</option>
+                                {% for genre in genres %}
+                                    <option value="{{ genre.id }}" {% if genre.id|slugify == params.genre %} SELECTED {% endif %}>{{ genre.genre_name }}</option>
+                                {%  endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Traffic</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="traffic">
+                                <option value="">All</option>
+                                <option value="exchange" {% if params.traffic == 'exchange' %} SELECTED {% endif %}>Exchange</option>
+                                <option value="publisher" {% if params.traffic == 'publisher' %} SELECTED {% endif %}>Publisher</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="type">
+                                <option value="">All</option>
+                                <option value="banners" {% if params.type == 'banners' %} SELECTED {% endif %}>Banners</option>
+                                <option value="video" {% if params.type == 'video' %} SELECTED {% endif %}>Video</option>
+                                <option value="interstitial" {% if params.type == 'interstitial' %} SELECTED {% endif %}>Interstitial</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Min. Daily Budget</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="budget__gte">
+                                <option value="">All</option>
+                                <option value="50" {% if params.budget__gte == 50 %} SELECTED {% endif %}>$50</option>
+                                <option value="100" {% if params.budget__gte == 100 %} SELECTED {% endif %}>$100</option>
+                                <option value="500" {% if params.budget__gte == 500 %} SELECTED {% endif %}>$500</option>
+                                <option value="1000" {% if params.budget__gte == 1000 %} SELECTED {% endif %}>$1,000</option>
+                                <option value="5000" {% if params.budget__gte == 5000 %} SELECTED {% endif %}>$5,000</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <div class="form-group">
+                        <label>Min. Revenue Prev Day</label>
+                        <div class="form-group">
+                            <select class="simpledropdown" name="revenue__gte">
+                                <option value="">All</option>
+                                <option value="50" {% if params.revenue__gte == 50 %} SELECTED {% endif %}>$50</option>
+                                <option value="100" {% if params.revenue__gte == 100 %} SELECTED {% endif %}>$100</option>
+                                <option value="500" {% if params.revenue__gte == 500 %} SELECTED {% endif %}>$500</option>
+                                <option value="1000" {% if params.revenue__gte == 1000 %} SELECTED {% endif %}>$1,000</option>
+                                <option value="5000" {% if params.revenue__gte == 5000 %} SELECTED {% endif %}>$5,000</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-block" style="width: 220px;">
+                    <label>Day</label>
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span id="date-caption">Today</span>&nbsp;<span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu select-date">
+                                <li data-date="{{ params.today }}"><a ref="#">Today</a></li>
+                                <li data-date="{{ params.day1 }}"><a ref="#">Yesterday</a></li>
+                                <li data-date="{{ params.day2 }}"><a ref="#">2 Days Ago</a></li>
+                                <li data-date="{{ params.day3 }}"><a ref="#">3 Days Ago</a></li>
+                                <li data-date="{{ params.day7 }}"><a ref="#">7 Days Ago</a></li>
+                                <li data-date="{{ params.day30 }}"><a ref="#">30 Days Ago</a></li>
+                                <li data-date=""><a ref="#">Custom</a></li>
+                            </ul>
+                        </div>
+                        <input class="form-control" type="text"  id="date" name="date" value="{{ params.date }}"/>
+                    </div>
+                </div>
+
+                <div class="control-block">
+                    <label>&nbsp;</label>
+                    <div class="form-group">
+                        <input id="sort_field" name="sort" value="{{ params.sort }}" type="hidden"/>
+                        <input id="export" name="export" value="" type="hidden"/>
+                        <input id="page" name="page" value="" type="hidden"/>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        {% if params.pagination %}
+        <ul class="pagination pagination-sm" id="ul-pagination">
+        </ul>
+        <div class="pull-right" style="margin-top: 15px;">
+            <a href="javascript:void(0);" id="expand-all">Expand All</a> |
+            <a id="collapse-all" href="javascript:void(0);">Collapse All</a> |
+            <a id="export-csv" href="javascript:void(0);">Export CSV</a>
+        </div>
+        <table class="table table-condensed tree">
+            <thead>
+            <tr>
+                {% for heading in headings %}
+                    <th class="{% if heading.sortable  %}sortable{% endif %} {{ heading.sort }}" {% if heading.sortable  %}data-order="{{ heading.sort }}" data-id="{{ heading.id }}"{% endif %}>{{ heading.name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in stats %}
+                <tr data-tt-id="{{ row.id }}" {% if row.parent %} data-tt-parent-id="{{ row.parent }}" {% endif %} {% if row.row_id %}id="tr-{{ row.row_id }}"{% endif %}>
+                    <td title="{{ row.advertiser }}">{{  row.advertiser | truncatechars:20}}</td>
+                    <td title="{{ row.campaign }}" {% if row.campaign|length > 20 %} title = "{{ row.campaign }}" {% endif %}>{{ row.campaign | truncatechars:20  }}</td>
+                    <td>
+                        {% if row.first_name and  row.last_name %}
+                            {{ row.first_name }}.{{ row.last_name|slice:":1" }}
+                        {%  endif %}
+                    </td>
+                    <td>{{ row.os }}</td>
+                    <td>{{ row.genre_name }}</td>
+                    <td>{{ row.traffic|capfirst }}</td>
+                    <td>{{ row.type|capfirst }}</td>
+                    <td>{{ row.country }}</td>
+                    <td class="{{ row.campaign_status }} td-status"><div><div class="progress-bar" style="width: {{ row.percent }}%;"></div> </div></td>
+                    <td class="budget-td" data-origin={{ row.budget | floatformat:"0"}} data-revenue={{ row.revenue | floatformat:"0" }}>
+
+                        <button class="editable" data-content="
+                               <div class='budget-container' data-rid='{{ row.row_id }}' data-id='{{ row.id }}' data-campaign='{{ row.campaign_id }}' data-traffic='{{ row.traffic_copy }}' data-country='{{ row.country }}'>
+                               <div class='form-group'>
+                                    <label><b>Daily</b></label>
+                                    <div class='input-group'>
+                                        <span class='input-group-addon'>$</span>
+                                        <input class='form-control daily-budget' value='{{ row.budget| floatformat:"0" }}'>
+                                    </div>
+                               </div>
+                               <div class='form-group'>
+                                   <label><b>Monthly</b></label>
+                                   <div class='input-group'>
+                                    <span class='input-group-addon'>$</span>
+                                    <input class='form-control monthly-budget' value=''>
+                                   </div>
+                               </div>
+                               <button class='btn-sm btn btn-primary budget-save'>Save</button>&nbsp;
+                               <button class='btn btn-sm budget-cancel'>Cancel</button>
+
+                               </div>" data-html="true">
+
+                            ${{ row.budget | floatformat:"0" | intcomma }}
+
+                        </button>
+
+                    </td>
+                    <td>${{ row.revenue | floatformat:"0"| intcomma }}</td>
+                    <td><a href="https://analytics.manage.com/campaign/{{ row.campaign_id }}?end_date={{ params.date }}&height=&date_range=custom&width=&limit=0&start_date={{ params.date}}&view=overview" target="blank">Stats</a> |
+                        <a href="https://am.manage.com/stats.php?order=&order_dir=1&date_from={{ params.date }}&date_to={{ params.date }}&break_by_period=day&source_id=-1&type=campaign&filter_0={{ row.campaign__advertiser_id }}&filter_1={{ row.campaign_id }}&action=" target="_blank">AM</a>
+                        | <a href="https://manageadvertiser.wufoo.com/forms/projection-request/" target="_blank">Project</a>
+                        | <a href="#" data-target="#share-modal" data-toggle="modal" class="share" data-campaign="{{ row.campaign_copy }}" data-traffic="{{ row.traffic_copy }}" data-type="{{ row.type }}" data-link="{{ request.scheme }}://{{ request.get_host }}{% url 'demand_optimization' %}?advertiser={{params.advertiser}}&user={{params.user }}&campaign={{row.campaign_id}}&region={{params.region}}&traffic={{row.traffic}}&type={{row.type}}&date={{params.date}}&expand=true">Share</a>
+                        <span id="span-{{ row.id }}" style="padding: 0;"></span> |
+                        <a href="{% url 'supply_optimization' %}?advertiser_genre={{ row.genre_id }}&os={{ row.os_copy }}&region={{ row.region }}&date={{ params.date }}" target="_blank">S</a>
+                    </td>
+                </tr>
+            {%  endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div class="alert alert-warning">
+                <strong>No Result!</strong>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
+{% block footer %}
+    <div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">Share</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="share-form" data-toggle="validator" role="form">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">From:</label>
+                            <input type="text" class="form-control" id="share-from" name="from" value="{{ request.user.get_full_name }} <{{ request.user.email }}>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">To:</label>
+                            <input type="text" class="form-control" id="share-to" name="to" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Subject:</label>
+                            <input type="text" class="form-control" id="share-subject" name="subject" required=>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Message:</label>
+                            <textarea class="form-control" id="share-message" name="message" rows="7" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="share-send">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/validator.min.js' %}"></script>
+    <script src="{% static 'js/jquery.twbsPagination.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'js/jquery.treetable.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/jquery.number.min.js' %}"></script>
+    <script>
+    function today() {
+        return moment('{% now "Y-m-d" %}', 'YYYY-MM-DD')
+    }
+    $(function() {
+        var uaJson = {{ ua_json | safe }};
+
+        {% if params.pagination %}
+        $('#ul-pagination').twbsPagination({
+            totalPages: {{ params.pagination.count }},
+            visiblePages: 15,
+            startPage: {{ params.pagination.current }},
+            onPageClick: function (event, page) {
+                if (page == {{ params.pagination.current }}) {
+                    return;
+                }
+
+                $('#page').val(page);
+                $('#main-form').submit();
+            }
+        });
+        {% endif %}
+        function checkAgo() {
+            var selected = moment($("#date").datepicker('getDate'));
+
+            if (selected.format('YYYY-MM-DD') == today().format('YYYY-MM-DD')) {
+                $('#date-caption').text('Today');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 1).format('YYYY-MM-DD')) {
+                $('#date-caption').text('Yesterday');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 2).format('YYYY-MM-DD')) {
+                $('#date-caption').text('2 Days Ago');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 3).format('YYYY-MM-DD')) {
+                $('#date-caption').text('3 Days Ago');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 7).format('YYYY-MM-DD')) {
+                $('#date-caption').text('7 Days Ago');
+            }
+            else if (selected.format('YYYY-MM-DD') == today().subtract('days', 30).format('YYYY-MM-DD')) {
+                $('#date-caption').text('30 Days Ago');
+            } else {
+                $('#date-caption').text('Custom');
+            }
+
+        }
+        $("#date").datepicker({format: "yyyy-mm-dd"}).on('changeDate', function(e) {
+            checkAgo();
+        });
+        $('.select-date li').click(function(ev) {
+            var _date = $(this).data('date');
+            if (_date) {
+                $("#date").datepicker('update', _date);
+            } else {
+                $("#date").datepicker('show');
+            }
+            $('#date-caption').text($(this).find('a').text());
+        });
+        checkAgo();
+
+        $('.tree').treetable({
+            column: 7,
+            expandable: true
+        {% if params.expand %}
+            ,initialState: 'expanded'
+        {% endif %}
+        });
+
+        $('th.sortable').click(function() {
+            var $th = $(this),
+                    $elSort = $('#sort_field'),
+                    id = $th.data('id'),
+                    order = $th.data('order');
+            if (order == 'asc') {
+                $elSort.val('-'+id);
+            } else {
+                $elSort.val(id);
+            }
+            $('#main-form').submit();
+        });
+        /*$('.editable').popover({
+         animation: false,
+         toggle: "popover",
+         container: 'body',
+         placement: 'right|auto',
+         trigger:'manual'
+         });*/
+        var $popoverEl = null;
+
+        function checkPopover() {
+            if ($popoverEl) {
+                $popoverEl.popover('destroy');
+                $popoverEl = null;
+            }
+        }
+
+        $('.editable').click(function() {
+            checkPopover();
+            var $this = $(this), origin = $this.parent().data('origin');
+            $this.popover({
+                animation: false,
+                toggle: "popover",
+                container: 'body',
+                placement: 'right|auto',
+                trigger:'manual'
+            });
+            $this.popover('show');
+            $popoverEl = $this;
+            //$this.addClass('has-popover');
+            var $el = $('#'+$this.attr('aria-describedby'))
+            $el.find('input:first').val(origin);
+            $el.find('input:last').val(origin*30);
+            $el.find('input:first').focus();
+            $el.find('input').number(true);
+        });
+        $('body').click(function(ev) {
+            var $el = $(ev.target);
+            if ($el.hasClass('editable')) {
+                return;
+            }
+            if ($el.parents('.popover').length) {
+                return;
+            }
+            checkPopover();
+        });
+        $('body').on('click', '.budget-cancel', function() {
+            checkPopover();
+        });
+
+        function updateParentTrs($elTr, diff) {
+            var parentId = $elTr.data('tt-parent-id');
+            if (parentId) {
+                var $elParent = $('tr[data-tt-id="'+parentId+'"]'),
+                        $elTd = $elParent.find('td.budget-td'),
+                        origin = $elTd.data('origin');
+                origin += diff;
+                $elTd.data('origin', origin);
+                $elTd.find('button').text('$'+origin.toLocaleString());
+                $elParent.find('.progress-bar').css('width', (origin ? $elTd.data('revenue') / origin * 100 : 0)+'%');
+                updateParentTrs($elParent, diff);
+            }
+        }
+        $('body').on('input', '.monthly-budget', function() {
+            var $this = $(this), val = $this.val(),
+                    $elContainer = $this.parents('.budget-container'),
+                    $daily = $elContainer.find('.daily-budget');
+            if (window.isNaN(val)) {
+                $elContainer.addClass('has-error');
+            } else {
+                $elContainer.removeClass('has-error');
+                var _val = Math.round(parseInt(val) / 30);
+                $daily.val((isNaN(_val) || !_val ? '' : _val)+'');
+            }
+        });
+        $('body').on('input', '.daily-budget', function() {
+            var $this = $(this), val = $this.val(),
+                    $elContainer = $this.parents('.budget-container'),
+                    $monthly = $elContainer.find('.monthly-budget');
+            if (window.isNaN(val)) {
+                $elContainer.addClass('has-error');
+            } else {
+                $elContainer.removeClass('has-error');
+                $monthly.val(parseInt(val) * 30+'');
+            }
+        });
+        $('body').on('click', '.budget-save', function() {
+            var $elContainer = $(this).parents('.budget-container'),
+                    budget = $elContainer.find('.daily-budget').val();
+            if (isNaN(budget)) {
+                $elContainer.addClass('has-error');
+            } else {
+                $elContainer.removeClass('has-error');
+                var rowId = $elContainer.data('rid'),
+                //childIds = $elContainer.data('childIds'),
+                        country = $elContainer.data('country'),
+                        campaign = $elContainer.data('campaign'),
+                        traffic = $elContainer.data('traffic');
+                $('#updating').css('display', 'block');
+                //if (rowId) {
+                $.get('{% url 'api_update_budget' %}?regional='+rowId+'&val='+budget+'&date={{ params.date }}&country='+country+'&campaign='+campaign+'&traffic='+traffic, function(res) {
+                    $('#updating').css('display', 'none');
+                    for (var i in res) {
+                        var item = res[i],
+                                $elTr = $('#tr-'+item.id);
+                        if ($elTr.length > 0) {
+                            var currentVal = parseInt(item.val),
+                                    originVal = $elTr.find('.budget-td').data('origin'), revenue = $elTr.find('.budget-td').data('revenue'),
+                                    diff = currentVal - originVal;
+                            $elTr.find('button').text('$' + currentVal.toLocaleString());
+                            $elTr.find('.budget-td').data('origin', currentVal);
+                            $elTr.find('.progress-bar').css('width', (currentVal ? revenue / currentVal * 100 : 0) + '%');
+                            updateParentTrs($elTr, diff);
+                        }
+                    }
+                    /**/
+                });
+                //};
+                checkPopover();
+            }
+        });
+
+        $('#expand-all').click(function() {
+            $('.tree').treetable('expandAll');
+        });
+
+        $('#collapse-all').click(function() {
+            $('.tree').treetable('collapseAll');
+        });
+        $('#export-csv').click(function() {
+            $('#export').val('true');
+            $('#main-form').submit();
+            $('#export').val('');
+        });
+
+        $('a.share').click(function() {
+            var $this = $(this), subject = 'Campaign: '+$this.data('campaign') + ' - ' + $this.data('traffic') +
+                    ' - ' + $this.data('type');
+            $('#share-subject').val(subject);
+            var text = 'Check this out\n'+$this.data('link');
+            $('#share-message').val(text);
+            setTimeout(function() {$('#share-to').focus();}, 500);
+            $('#share-send').data('id', $this.next().attr('id'));
+        });
+
+        $('#share-send').click(function(ev) {
+            var data = {};
+            $("#share-form").serializeArray().map(function(x){data[x.name] = x.value;});
+            var $span = $('#'+$(this).data('id'));
+            $span.html('<i class="fa fa-circle-o-notch fa-spin fade-in"></i>');
+            $.post('{% url 'tools_api_mail' %}', data, function(res) {
+                if (res.status == 'success') {
+                    $span.html('<i class="fa fa-check fade-in success"></i>');
+                } else {
+                    $span.html('<i class="fa fa-exclamation-triangle fade-in danger"></i>');
+                }
+            });
+            $(this).prev().trigger('click');
+        });
+
+        $('#sel-campaign').select2({});
+        $('#sel-advertiser').select2({});
+
+        $("select[name='user']").change(function() {
+            var $el = $(this), val = $el.val();
+            if (uaJson[val]) {
+                $('select[name="advertiser"]').select2("val",uaJson[val]);
+            }
+        });
+    });
+    </script>
+{% endblock %}

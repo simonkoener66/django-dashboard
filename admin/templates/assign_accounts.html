@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block page_title %}
+	Assign {{ type }}s
+{% endblock %}
+
+{% block content %}
+<div class="row result-table">
+    <table class="table table-condensed">
+        <thead>
+            <th>{{ type }} ID</th>
+            <th>{{ type }} Name</th>
+            <th>Salesperson</th>
+            <th>Date Created</th>
+            <th>Date Modified</th>
+        </thead>
+        <tbody>
+            {% for a in accounts %}
+             <tr>
+                <td>{{ a.internal_id }}</td>
+                <td title="{{ a.name }}">{{ a.name| truncatechars:20 }}</td>
+                <td>
+                <select class="user simpledropdown" data-id="{{ a.id }}">
+                    {% for u in users %}
+                        <option value="{{ u.id }}" {% if u.id == a.user_id %}SELECTED{% endif %}>{{ u.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+                </td>
+                <td>{% if a.date_created %}{{ a.date_created|date:"n/j/Y" }}{% endif %}</td>
+                <td>{% if a.date_updated %}{{ a.date_updated|date:"n/j/Y" }}{% endif %}</td>
+             </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<br><br>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" value="" name="data" id="json" />
+        <button class="btn btn-primary center-block">Update</button>
+    </form>
+</div>
+{% endblock content %}
+{% block footer %}
+    <script>
+    $(function() {
+        var _json = {}
+        $('.user').change(function() {
+            _json[$(this).data('id')] = $(this).val();
+            $('#json').val(JSON.stringify(_json));
+        });
+    });
+    </script>
+{% endblock footer %}

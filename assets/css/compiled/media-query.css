@@ -1,0 +1,120 @@
+ @media (min-width: 992px) and (max-width: 1200px) {
+ #topbar-nav .nav > li > a {
+ font-size: 0.875em;
+ padding-left: 15px;
+}
+ #topbar-nav .nav > li > a > span {
+ padding-left: 28px;
+}
+ #topbar-nav .nav li .submenu > li > a {
+ padding-left: 35px;
+ font-size: 0.75em;
+}
+ #topbar-nav.nav > .open > .submenu > li > .submenu a {
+ padding-left: 55px;
+}
+#header-navbar .mob-title{display:none}
+
+}
+
+@media (min-width: 992px) {
+h4{font-size:20px}
+.guest-header > .container .navbar-brand {
+margin-top:7px;
+padding-top:0px;
+}
+
+ #topbar-nav .nav > li > a {
+ height: 48px;
+ padding-bottom: 5px;
+ padding-top: 5px;
+}
+#header-navbar .mob-title{display:none}
+.filter-block-left .control-block{padding-right:10px;}
+.filter-block-right .control-block{padding-left:10px;}
+}
+ @media (max-width: 768px) {
+	 
+	 #logo{width:50px}
+#logo img {
+height:36px;
+}
+#header-navbar .profile-dropdown > a > span .caret{margin-top:-3px;}
+.control-section-right {
+text-align:left
+}
+.control-section-right .control-block {
+padding-left:0px;
+padding-right:15px;
+}
+#sticky-sidebar {
+position:relative;
+top:0px!important
+}
+.navbar-nav .profile-dropdown .dropdown-menu{right:0px;}
+#login-full-left{margin-top:0px}
+#side-bar-toggler{display:none}
+
+}
+
+
+ @media (max-width: 420px) {
+	 #header-navbar .profile-dropdown > a > span .caret{margin-top:-3px;}
+	 
+ .navbar-nav .profile-dropdown .dropdown-menu{right:0px;}
+ .navbar-nav > li > .dropdown-menu {
+min-width:150px
+}
+ .navbar-nav > li > .dropdown-menu.notifications-list {
+min-width:auto;
+width:100%;
+position:absolute;
+right:0
+}
+ h4 {
+font-size:18px;
+}
+ #header-navbar .nav > li.profile-dropdown i {
+font-size:1.2em;
+}
+ .control-section label {
+display:block;
+margin-bottom:0px;
+}
+ .control-section .control-block {
+display:block;
+}
+.filter-block-right .control-block{padding-left:0px;}
+ .graph-btn-group {
+float:left
+}
+ .graph-btn-group .btn {
+padding:6px;
+}
+ .btn {
+padding:6px
+}
+ .table-button {
+margin-bottom:15px;
+}
+ .radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {
+display:block;
+margin-left:0px
+}
+ .faq-control {
+float:left;
+margin-top:0px;
+padding-right:0px;
+}
+ .buttons-right .pull-right {
+float:left
+}
+ #sticky-sidebar {
+top:0px!important
+}
+.blacklist-pane .sep-wrap{padding-top:5px;}
+.blacklist-pane .sep{text-align:center;height:25px;line-height:25px;}
+
+.dd-list .dd-list{padding-left:15px;}
+#side-bar-toggler{display:none}
+}
