@@ -1,3 +1,2 @@
 Simple CRM Admin dashboard work example (built with Django framework)
-
-Built by Simon Koener
+For demonstration only, and this repository is just a small part of the project
